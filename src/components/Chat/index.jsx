@@ -1,38 +1,12 @@
 import React, { useState } from "react";
 import { BiMessageSquareDetail, BiSend } from "react-icons/bi";
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import { askQuestion } from "../../api";
 import "./styles.css";
 
-const listMessages = [
-  {
-    message: "En que te puedo ayudar",
-    type: "addressee",
-  },
-  {
-    message: "Hola Como estas",
-    type: "sender",
-  },
-  {
-    message: "En que te puedo ayudar",
-    type: "addressee",
-  },
-  {
-    message: "Hola Como estas",
-    type: "sender",
-  },
-  {
-    message: "En que te puedo ayudar",
-    type: "addressee",
-  },
-  {
-    message: "Hola Como estas",
-    type: "sender",
-  },
-];
-
 const Chat = () => {
-  const [inputMessage, setInputMessage] = useState();
-  const [listMsgs, setListMsgs] = useState([...listMessages]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [listMsgs, setListMsgs] = useState([]);
   const [handleChat, setHandleChat] = useState("close");
 
   const onChange = (_event) => {
@@ -41,14 +15,21 @@ const Chat = () => {
   };
 
   const onSendMessage = () => {
-    setListMsgs([
-      {
-        message: inputMessage,
-        type: "sender",
-      },
-      ...listMsgs,
-    ]);
-    setInputMessage("");
+    const oldListMessages = [...listMsgs];
+    const makeQuestion = async () => {
+      oldListMessages.unshift({ message: inputMessage, type: "sender" });
+      setListMsgs([...oldListMessages]);
+      setInputMessage("");
+      const response = await askQuestion({
+        key: "8203b5872ebf4cbb11b1ff27aa88d1511d9c1cbb",
+        question: inputMessage,
+      });
+      oldListMessages.unshift(response);
+      setListMsgs([...oldListMessages]);
+    };
+
+    makeQuestion();
+    console.log("FUERA", listMsgs);
   };
 
   const onKeyUpSendMessage = (_event) => {
@@ -77,8 +58,11 @@ const Chat = () => {
 
         <div className="chat__body">
           <div className="chat__messages">
-            {listMsgs.map(({ type, message }) => (
-              <div className={`chat__message chat__message-${type}`}>
+            {listMsgs.map(({ type, message }, idx) => (
+              <div
+                key={`${idx}-${type}`}
+                className={`chat__message chat__message-${type}`}
+              >
                 <p>{message}</p>
               </div>
             ))}
@@ -88,6 +72,7 @@ const Chat = () => {
             <input
               className="chat__boxInput"
               type="text"
+              name="boxMessage"
               placeholder="Write a message"
               onChange={onChange}
               onKeyUp={onKeyUpSendMessage}

@@ -28,8 +28,9 @@ const Chat = () => {
       setListMsgs([...oldListMessages]);
     };
 
-    makeQuestion();
-    console.log("FUERA", listMsgs);
+    if (inputMessage !== "" && inputMessage !== null) {
+      makeQuestion();
+    }
   };
 
   const onKeyUpSendMessage = (_event) => {

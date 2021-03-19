@@ -19,7 +19,7 @@ import axios from "axios";
 
 export const askQuestion = async ({ key, question }) => {
   const res = await axios.get(
-    `http://beta.soldai.com/bill-cipher/askquestion?session_id=1903135173030124&key=${key}&question=${question}`
+    `https://beta.soldai.com/bill-cipher/askquestion?session_id=1903135173030124&key=${key}&question=${question}`
   );
 
   const {
